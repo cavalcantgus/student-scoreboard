@@ -4,13 +4,45 @@
             <v-card-title>
                 <span class="card-title">Cadastrar Aluno</span>
                 <v-form ref="form">
-                    <v-text-field v-model="localStudent.name" label="Nome" required></v-text-field>
-                    <v-text-field v-model="localStudent.grade1" label="Nota 1" required></v-text-field>
-                    <v-text-field v-model="localStudent.grade2" label="Nota 2" required></v-text-field>
-                    <v-text-field v-model="localStudent.grade3" label="Nota 3" required></v-text-field>
-                    <v-text-field v-model="localStudent.grade4" label="Nota 4" required></v-text-field>
+                    <v-text-field 
+                        v-model="localStudent.name" 
+                        :rules="[rules.name]"
+                        label="Nome" required
+                        class="input-field">
+                    </v-text-field>
+                    <v-combobox 
+                        v-model="localStudent.subject" 
+                        :items="subjects"
+                        :rules="validadeSubjectRules"
+                        label="Disciplina" required
+                        clearable
+                        class="input-field">
+                    </v-combobox>
+                    <v-text-field 
+                        v-model="localStudent.grade1" 
+                        :rules="gradesValidation(1)"
+                        label="1° Bim" required>
+                    </v-text-field>
+                    <v-text-field 
+                        v-model="localStudent.grade2"
+                        :rules="gradesValidation(2)" 
+                        label="2° Bim" required
+                        class="input-field">
+                    </v-text-field>
+                    <v-text-field 
+                        v-model="localStudent.grade3" 
+                        :rules="gradesValidation(3)"
+                        label="3° Bim" required
+                        class="input-field">
+                    </v-text-field>
+                    <v-text-field 
+                        v-model="localStudent.grade4" 
+                        :rules="gradesValidation(4)"
+                        label="4° Bim" required
+                        class="input-field">
+                    </v-text-field>
                     <v-card-actions class="actions">
-                        <v-btn class="cancel-button" @click="cancel">Cancelar</v-btn>
+                        <v-btn class="cancel-button" @click="close">Cancelar</v-btn>
                         <v-btn class="save-button" @click="save">Salvar</v-btn>
                     </v-card-actions>
                 </v-form>
@@ -28,7 +60,19 @@ export default {
     data() {
         return{
             localStudent: { ...this.student},
-            localVisible: this.visible
+            localVisible: this.visible,
+            subjects: ['Matemática', 'Português', 'Geografia', 'Ciências', 'Filosofia', 'Inglês'],
+            rules: {
+                name: value => !!value || 'Este campo é obrigatório'
+            }
+        }
+    },
+    computed: {
+        validadeSubjectRules() {
+            return [
+                value => !!value || 'Você precisa escolher uma disciplina',
+                value => this.subjects.includes(value) || 'Disciplina inválida'
+            ];
         }
     },
     watch: {
@@ -40,25 +84,40 @@ export default {
         }
     },
     methods: {
+        validadeSubject(value) {
+           if(!value) return 'Você precisa escolher uma disciplina';
+           if(!this.subjects.includes(value)) return 'Disciplina inválida'
+
+           return true
+        },
+        gradesValidation(gradeNumber){
+            return [
+                value => !!value || `Você deve digitar a nota do ${gradeNumber}° bimestre`,
+                value => (value && !isNaN(value) && value >= 0 && value <= 10) || `A nota do ${gradeNumber}° bimestre deve ser um número entre 0 e 10`
+            ]
+        },
         close() {
             this.$emit('cancel')
         },
-        save() {
-            if(this.$refs.form.validate()){
+        async save() {
+            const { valid } = await this.$refs.form.validate()
+            if(valid){
                 this.$emit('save', this.localStudent)
             }
         },
-         outsideClick() {
+        outsideClick() {
             this.localVisible = false
-         }
+        }
     }
 }
 </script>
 
 <style scoped>
 .custom-card {
-    border-radius: 76px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 .card-title {
     text-align: center;
     width: 100%; 
@@ -67,12 +126,31 @@ export default {
     font-size: 20px; 
     font-weight: bold; 
 }
-.save-button {
-    background-color: rgb(70, 70, 245);
-    color: #fff !important;
+
+.input-field .v-input__control {
+    border-radius: 12px;
+    overflow: hidden;
 }
+
+.input-field .v-input__slot {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background-color: #f9f9f9;
+}
+
+.save-button {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
 .cancel-button {
-    background: rgb(235, 48, 48);
-    color: #fff !important;
+    background: #f44336;
+    color: #fff;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
 }
 </style>
