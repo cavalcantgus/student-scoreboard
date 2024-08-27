@@ -1,9 +1,14 @@
 <template>
   <div>
+    <h1 class="page-title">Sistema de Cadastro de Notas</h1>
     <v-btn color="primary" @click="showForm">Cadastrar</v-btn>
     <v-data-table :headers="headers" :items="students" item-key="id">
       <template v-slot:[`item.name`]="{ item }">
         {{ item.name }}
+      </template>
+
+      <template v-slot:[`item.subject`]="{ item }">
+        {{ item.subject}}
       </template>
 
       <template v-slot:[`item.grade1`]="{ item }">
@@ -27,8 +32,9 @@
       </template>
 
       <template v-slot:[`item.status`]="{ item } ">
-        {{ calculateStatus(item) }}
-        <v-chip :color="item.status ? 'red' : 'green'"></v-chip>
+        <v-chip :color="getColor(item)" class="status-chip" text-color="white">
+            {{ calculateStatus(item) }}
+        </v-chip>
       </template>
 
       <template v-slot:[`item.actions`]="{ item }">
@@ -57,11 +63,12 @@ export default {
   data() {
     return {
       headers: [
-        { title: 'Nome', value: 'name' },
-        { title: 'Nota 1', value: 'grade1' },
-        { title: 'Nota 2', value: 'grade2' },
-        { title: 'Nota 3', value: 'grade3' },
-        { title: 'Nota 4', value: 'grade4' },
+        { title: 'Aluno', value: 'name' },
+        { title: 'Disciplina', value: 'subject' },
+        { title: '1° Bim', value: 'grade1' },
+        { title: '2° Bim', value: 'grade2' },
+        { title: '3° Bim', value: 'grade3' },
+        { title: '4° Bim', value: 'grade4' },
         { title: 'Média', value: 'average' },
         { title: 'Situação', value: 'status' },
         { title: 'Ações', value: 'actions', sortable: false }
@@ -79,7 +86,7 @@ export default {
     closeForm() {
       this.formVisible = false
     },
-    saveStudent(student) {
+    async saveStudent(student) { 
       if (student.id) {
         const index = this.students.findIndex(s => s.id === student.id)
         if (index !== -1) {
@@ -104,7 +111,25 @@ export default {
     },
     calculateStatus(student) {
       return this.calculateAverage(student) >= 7 ? 'Aprovado' : 'Reprovado'
+    },
+    getColor(student) {
+        return this.calculateStatus(student) === 'Aprovado' ? 'green' : 'red'
     }
   }
 }
 </script>
+
+<style scoped>
+.page-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.status-chip {
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+}
+</style>
