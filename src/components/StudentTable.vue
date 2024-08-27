@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1 class="page-title">Sistema de Cadastro de Notas</h1>
     <v-btn color="primary" @click="showForm">Cadastrar</v-btn>
     <v-data-table :headers="headers" :items="students" item-key="id">
       <template v-slot:[`item.name`]="{ item }">
@@ -119,6 +120,13 @@ export default {
 </script>
 
 <style scoped>
+.page-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
 .status-chip {
     width: 100%;
     text-align: center;
