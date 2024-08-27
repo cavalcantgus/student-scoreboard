@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="localVisible" width="500px" v-if="localVisible" @click:outside="outsideClick">
+    <v-dialog v-model="localVisible" width="500px" @click:outside="close" @keydown.esc="close">
         <v-card class="custom-card" outlined>
             <v-card-title>
                 <span class="card-title">Cadastrar Aluno</span>
@@ -104,9 +104,6 @@ export default {
             if(valid){
                 this.$emit('save', this.localStudent)
             }
-        },
-        outsideClick() {
-            this.localVisible = false
         }
     }
 }
