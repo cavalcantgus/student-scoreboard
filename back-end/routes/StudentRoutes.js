@@ -11,6 +11,12 @@ const studentRoutes = [
         method: 'POST',
         url: '/student',
         handler: studentHandler.addStudent
+    },
+    
+    {
+        method: 'PUT',
+        url: '/student/:id',
+        handler: studentHandler.updateStudent
     }
 ]
 

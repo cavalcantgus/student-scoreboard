@@ -10,7 +10,18 @@ function addStudent(student) {
     return student
 }
 
+function updateStudent(id, updatedStudent) {
+    const index = students.findIndex(student => student.id === id)
+    if(index !== -1){
+        students[index] = updatedStudent
+        return students[index]
+    } else {
+        return null
+    }
+}
+
 export default {
     getAllStudents,
-    addStudent
+    addStudent,
+    updateStudent
 }

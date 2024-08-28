@@ -11,7 +11,18 @@ async function addStudent(req, reply) {
     reply.code(201).send(newStudent)
 }
 
+async function updateStudent(req, reply) {
+    const id  = Number(req.params.id)
+    const updatedStudent = req.body
+
+    const student = studentRepository.updateStudent(id, updatedStudent)
+    if(student){
+        reply.send(student)
+    }
+}
+
 export default {
     getAllStudents,
-    addStudent
+    addStudent,
+    updateStudent
 }
