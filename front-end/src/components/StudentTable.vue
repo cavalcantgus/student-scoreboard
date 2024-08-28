@@ -102,7 +102,6 @@ export default {
           const index = this.students.findIndex(s => s.id === student.id)
           if (index !== -1) {
             this.students.splice(index, 1, response.data)
-            console.log(response.data)
           }
         } else {
           student.id = uuidv4()
@@ -117,8 +116,14 @@ export default {
     editStudent(student) {
       this.showForm(student)
     },
-    deleteStudent(student) {
-      this.students = this.students.filter(s => s.id !== student.id)
+    async deleteStudent(student) {
+      try{
+        await api.delete(`/student/${student.id}`)
+        this.students = this.students.filter(s => s.id !== student.id)
+      }
+      catch(error) {
+        console.error('Erro ao deletar')
+      }
     },
     calculateAverage(student) {
       const grades = [student.grade1, student.grade2, student.grade3, student.grade4].map(Number)

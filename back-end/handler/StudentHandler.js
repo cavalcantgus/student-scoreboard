@@ -21,8 +21,14 @@ async function updateStudent(req, reply) {
     }
 }
 
+async function deleteStudent(req, reply) {
+    const id = Number(req.params.id)
+    studentRepository.deleteStudent(id)
+}
+ 
 export default {
     getAllStudents,
     addStudent,
-    updateStudent
+    updateStudent,
+    deleteStudent
 }

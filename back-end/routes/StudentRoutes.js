@@ -17,6 +17,12 @@ const studentRoutes = [
         method: 'PUT',
         url: '/student/:id',
         handler: studentHandler.updateStudent
+    },
+
+    {
+        method: 'DELETE',
+        url: '/student/:id',
+        handler: studentHandler.deleteStudent
     }
 ]
 
