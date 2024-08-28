@@ -54,6 +54,7 @@
 
 <script>
 import StudentForm from './StudentForm.vue';
+import api from '@/api'
 import { v4 as uuidv4 } from 'uuid'
 
 export default {
@@ -78,6 +79,14 @@ export default {
       formVisible: false
     };
   },
+  async mounted() {
+      try {
+        const response = await api.get('/student');
+        this.students = response.data;
+      } catch (error) {
+        console.error('Erro ao carregar os estudantes:', error);
+      }
+  },
   methods: {
     showForm(student = {}) {
       this.currentStudent = { ...student }
@@ -87,16 +96,23 @@ export default {
       this.formVisible = false
     },
     async saveStudent(student) { 
-      if (student.id) {
-        const index = this.students.findIndex(s => s.id === student.id)
-        if (index !== -1) {
-          this.students[index] = student
+      try {
+        if (student.id) {
+          const response = await api.put(`/student/${student.id}`, student)
+          const index = this.students.findIndex(s => s.id === student.id)
+          if (index !== -1) {
+            this.students.splice(index, 1, response.data)
+            console.log(response.data)
+          }
+        } else {
+          student.id = uuidv4()
+          const response = await api.post('/student', student)
+          this.students.push(response.data); 
         }
-      } else {
-        student.id = uuidv4()
-        this.students.push(student)
-      }
-      this.closeForm();
+        this.closeForm()
+      } catch (error) {
+        console.error('Erro ao salvar aluno:', error)
+      } 
     },
     editStudent(student) {
       this.showForm(student)
