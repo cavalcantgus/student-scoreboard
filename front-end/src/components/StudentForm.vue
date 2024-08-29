@@ -103,7 +103,7 @@ export default {
         gradesValidation(gradeNumber){
             return [
                 value => !!value || `Você deve digitar a nota do ${gradeNumber}° bimestre`,
-                value => /^\d+([.,]\d{1,2})?$/.test(value) || `A nota deve estar no formato correto`,
+                value => /^(\d+([.,]\d{0,2})?)$/.test(value) || `A nota deve estar no formato correto`,
                 value => {
                     const parsedValue = parseFloat(value.replace(',', '.'))
                     return (parsedValue >= 0 && parsedValue <= 10) || `A nota deve estar entre 0 e 10`
@@ -115,7 +115,7 @@ export default {
             const field = `grade${gradeNumber}`;
             this.localStudent[field] = this.localStudent[field]
                 .replace(',', '.')
-                .replace(/^0+(?!$)/, '')
+                .replace(/^0+(?!$)/, '0'); // Permite que o valor zero seja mantido corretamente.
         },
 
         close() {
