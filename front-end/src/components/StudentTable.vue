@@ -28,12 +28,12 @@
       </template>
 
       <template v-slot:[`item.average`]="{ item }">
-        {{ calculateAverage(item) }}
+        {{ item.average }}
       </template>
 
       <template v-slot:[`item.status`]="{ item } ">
         <v-chip :color="getColor(item)" class="status-chip" text-color="white">
-            {{ calculateStatus(item) }}
+            {{ item.status }}
         </v-chip>
       </template>
 
@@ -125,16 +125,9 @@ export default {
         console.error('Erro ao deletar')
       }
     },
-    calculateAverage(student) {
-      const grades = [student.grade1, student.grade2, student.grade3, student.grade4].map(Number)
-      const total = grades.reduce((sum, grade) => sum + grade, 0)
-      return (total / grades.length).toFixed(2)
-    },
-    calculateStatus(student) {
-      return this.calculateAverage(student) >= 7 ? 'Aprovado' : 'Reprovado'
-    },
     getColor(student) {
-        return this.calculateStatus(student) === 'Aprovado' ? 'green' : 'red'
+        const status = student.status === 'Aprovado' ? 'green' : 'red'
+        return status
     }
   }
 }
