@@ -20,8 +20,18 @@ function updateStudent(id, updatedStudent) {
     }
 }
 
+function deleteStudent(id) {
+    const index = students.findIndex(student => student.id === id)
+    if(index !== -1){
+        students.splice(index, 1)
+        return true
+    }
+    return false
+}
+
 export default {
     getAllStudents,
     addStudent,
-    updateStudent
+    updateStudent,
+    deleteStudent
 }

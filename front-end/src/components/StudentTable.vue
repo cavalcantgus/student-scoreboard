@@ -28,12 +28,12 @@
       </template>
 
       <template v-slot:[`item.average`]="{ item }">
-        {{ calculateAverage(item) }}
+        {{ item.average }}
       </template>
 
       <template v-slot:[`item.status`]="{ item } ">
         <v-chip :color="getColor(item)" class="status-chip" text-color="white">
-            {{ calculateStatus(item) }}
+            {{ item.status }}
         </v-chip>
       </template>
 
@@ -102,7 +102,6 @@ export default {
           const index = this.students.findIndex(s => s.id === student.id)
           if (index !== -1) {
             this.students.splice(index, 1, response.data)
-            console.log(response.data)
           }
         } else {
           student.id = uuidv4()
@@ -117,19 +116,18 @@ export default {
     editStudent(student) {
       this.showForm(student)
     },
-    deleteStudent(student) {
-      this.students = this.students.filter(s => s.id !== student.id)
-    },
-    calculateAverage(student) {
-      const grades = [student.grade1, student.grade2, student.grade3, student.grade4].map(Number)
-      const total = grades.reduce((sum, grade) => sum + grade, 0)
-      return (total / grades.length).toFixed(2)
-    },
-    calculateStatus(student) {
-      return this.calculateAverage(student) >= 7 ? 'Aprovado' : 'Reprovado'
+    async deleteStudent(student) {
+      try{
+        await api.delete(`/student/${student.id}`)
+        this.students = this.students.filter(s => s.id !== student.id)
+      }
+      catch(error) {
+        console.error('Erro ao deletar')
+      }
     },
     getColor(student) {
-        return this.calculateStatus(student) === 'Aprovado' ? 'green' : 'red'
+        const status = student.status === 'Aprovado' ? 'green' : 'red'
+        return status
     }
   }
 }
