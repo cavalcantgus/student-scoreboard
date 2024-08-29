@@ -126,8 +126,7 @@ export default {
       }
     },
     getColor(student) {
-        const status = student.status === 'Aprovado' ? 'green' : 'red'
-        return status
+        return student.status === 'Aprovado' ? 'green' : 'red'
     }
   }
 }

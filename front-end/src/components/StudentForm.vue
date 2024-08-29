@@ -5,8 +5,10 @@
                 <span class="card-title">Cadastrar Aluno</span>
                 <v-form ref="form">
                     <v-text-field 
+                        type="text" 
                         v-model="localStudent.name" 
                         :rules="[rules.name]"
+                        pattern="[A-Za-z\s]*"
                         label="Nome" required
                         class="input-field">
                     </v-text-field>
@@ -19,25 +21,33 @@
                         class="input-field">
                     </v-combobox>
                     <v-text-field 
+                        type="number"
                         v-model="localStudent.grade1" 
                         :rules="gradesValidation(1)"
+                        step="0.01" 
                         label="1° Bim" required>
                     </v-text-field>
                     <v-text-field 
+                        type="number"
                         v-model="localStudent.grade2"
                         :rules="gradesValidation(2)" 
+                        step="0.01" 
                         label="2° Bim" required
                         class="input-field">
                     </v-text-field>
                     <v-text-field 
+                        type="number"
                         v-model="localStudent.grade3" 
                         :rules="gradesValidation(3)"
+                        step="0.01" 
                         label="3° Bim" required
                         class="input-field">
                     </v-text-field>
                     <v-text-field 
+                        type="number"
                         v-model="localStudent.grade4" 
                         :rules="gradesValidation(4)"
+                        step="0.01" 
                         label="4° Bim" required
                         class="input-field">
                     </v-text-field>
@@ -84,16 +94,11 @@ export default {
         }
     },
     methods: {
-        validadeSubject(value) {
-           if(!value) return 'Você precisa escolher uma disciplina';
-           if(!this.subjects.includes(value)) return 'Disciplina inválida'
-
-           return true
-        },
         gradesValidation(gradeNumber){
             return [
                 value => !!value || `Você deve digitar a nota do ${gradeNumber}° bimestre`,
-                value => (value && !isNaN(value) && value >= 0 && value <= 10) || `A nota do ${gradeNumber}° bimestre deve ser um número entre 0 e 10`
+                value => !isNaN(parseFloat(value)) || `A nota deve ser um número`,
+                value => (value >= 0 && value <= 10) || `A nota deve estar entre 0 e 10`
             ]
         },
         close() {
