@@ -7,7 +7,7 @@
                     <v-text-field 
                         type="text" 
                         v-model="localStudent.name" 
-                        :rules="[rules.name]"
+                        :rules="rules.name"
                         pattern="[A-Za-z\s]*"
                         label="Nome" required
                         class="input-field">
@@ -78,8 +78,11 @@ export default {
             localVisible: this.visible,
             subjects: ['Matemática', 'Português', 'Geografia', 'Ciências', 'Filosofia', 'Inglês'],
             rules: {
-                name: value => !!value || 'Este campo é obrigatório',
-                
+                name:  [
+                    value => !!value || 'Este campo é obrigatório',
+                    value => this.validateName(value) || 'Você precisa inserir um nome válido',
+                    value => value.length <= 50 || 'O nome não pode ter mais de 50 caracteres'
+                ]
             }
         }
     },
@@ -100,6 +103,14 @@ export default {
         }
     },
     methods: {
+         validateName(name) {
+            if (!name || typeof name !== 'string') {
+                return false; 
+            }
+            const regex = /^[a-záàâãéèêíïóôõöúçñ]+$/i;
+            return name.trim().split(/ +/).every(parts => regex.test(parts));
+         },
+
         gradesValidation(gradeNumber){
             return [
                 value => !!value || `Você deve digitar a nota do ${gradeNumber}° bimestre`,
