@@ -15,3 +15,6 @@
 {"level":"info","message":"Student created","timestamp":"2024-08-29T09:59:07.532Z"}
 {"level":"info","message":"Student created","timestamp":"2024-08-29T10:01:58.491Z"}
 {"level":"info","message":"Student created","timestamp":"2024-08-29T10:02:25.260Z"}
+{"level":"info","message":"Student created","timestamp":"2024-08-29T10:03:20.131Z"}
+{"level":"info","message":"Update student","timestamp":"2024-08-29T10:03:26.460Z"}
+{"level":"info","message":"Delete student","timestamp":"2024-08-29T10:03:30.521Z"}

@@ -1,29 +1,68 @@
-import studentRepository from '../repositories/StudentRepository.js';
+import studentRepository from '../repositories/StudentRepository.js'
+import logger from '../logs/logger.js'
 
 async function getAllStudents(req, reply) {
-    const students = studentRepository.getAllStudents()
-    reply.send(students)
+    try{
+        const students = studentRepository.getAllStudents()
+        reply.send(students)
+    } catch(error) {
+        logger.error('Failed to get students:', error)
+        reply.code(500).send({ error: 'Failed to fetch students' })
+    }
 }
 
 async function addStudent(req, reply) {
-    const newStudent = req.body
-    const savedStudent = await studentRepository.addStudent(calculateAverageAndStatus(newStudent))
-    console.log('Student created')
-    reply.code(201).send(savedStudent)
+    try{
+        const newStudent = req.body
+        if(!newStudent || typeof newStudent !== 'object') {
+            reply.code(400).send({ error: 'Invalid student!'})
+        }
+        const savedStudent = await studentRepository.addStudent(calculateAverageAndStatus(newStudent))
+        logger.info('Student created')
+        reply.code(201).send(savedStudent)
+    } catch(error) {
+        logger.error('Failed to add student:', error)
+        reply.code(500).send({ error: 'Failed to add student'})
+    }
 }
 
 async function updateStudent(req, reply) {
-    const id  = Number(req.params.id)
-    const updatedStudent = req.body
-    const student = await studentRepository.updateStudent(id, calculateAverageAndStatus(updatedStudent))
-    if(student){
-        reply.send(student)
+    try{
+        const id  = Number(req.params.id)
+        const updatedStudent = req.body
+        if(!updatedStudent || typeof updatedStudent !== 'object'){
+            reply.code(400).send({ error: 'Invalid student or ID'})
+        }
+        const student = await studentRepository.updateStudent(id, calculateAverageAndStatus(updatedStudent))
+        if(student){
+            logger.info('Update student')
+            reply.send(student)
+        } else {
+            reply.code(404).send({ error: 'Student not found'})
+        }
+    } catch(error) {
+        logger.error('Failed to update student:', error)
+        reply.code(500).send({ error: 'Failed to update student'})
     }
 }
 
 async function deleteStudent(req, reply) {
-    const id = Number(req.params.id)
-    studentRepository.deleteStudent(id)
+    try{ 
+        const id = Number(req.params.id)
+        if(isNaN(id)){
+            return reply.code(404).send({ error: 'Invalid ID'})
+        }
+        const result = studentRepository.deleteStudent(id)
+        if(result) {
+            logger.info('Delete student')
+            reply.code(204).send()
+        } else {
+            reply.code(404).send({ error: 'Student not found'})
+        }
+    } catch(error) {
+        logger.error('Failed to delete student:', error)
+        reply.code(500).send({ error: 'Failed to delete student'})
+    }
 }
  
 function calculateAverageAndStatus(student) {

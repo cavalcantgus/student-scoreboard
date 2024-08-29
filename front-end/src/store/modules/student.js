@@ -27,35 +27,62 @@ const actions = {
     async fetchStudents({ commit }) {
         try {
             const response = await fetch('http://localhost:3000/student')
+            if(!response.ok){
+                throw new Error(`HTTP Error! StatusCode: ${response.status}`)
+            }
             const students = await response.json()
             commit('SET_STUDENTS', students)
         } catch(error) {
-            console.error()
+            console.error('Failed to fetch students', error)
         }
     },
 
     async saveStudent({ commit }, student) {
-        let result 
-        if (student.id) {
-          result = await fetch(`http://localhost:3000/student/${student.id}`, {
-            method: 'PUT',
-            body: JSON.stringify(student),
-            headers: { 'Content-Type': 'application/json' }
-          }).then(res => res.json());
-          commit('UPDATE_STUDENT', result)
-        } else {
-            result = await fetch('http://localhost:3000/student', {
-            method: 'POST',
-            body: JSON.stringify(student),
-            headers: { 'Content-Type': 'application/json' }
-          }).then(res => res.json())
-          commit('ADD_STUDENT', result)
+        try{ 
+            let response
+            let result 
+            if (student.id) {
+                response = await fetch(`http://localhost:3000/student/${student.id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(student),
+                    headers: { 'Content-Type': 'application/json' }
+                })
+            } else {
+                response = await fetch('http://localhost:3000/student', {
+                method: 'POST',
+                body: JSON.stringify(student),
+                headers: { 'Content-Type': 'application/json' }
+                })
+            }
+
+            if(!response.ok){
+                throw new Error(`HTTP Error! StatusCode: ${response.status}`)
+            }
+            
+            result = await response.json()
+
+            if(student.id){
+                commit('UPDATE_STUDENT', result)
+            } else {
+                commit('ADD_STUDENT', result)
+            }
+        }
+        catch(error) {
+            console.error('Failed to save or update student:', error)
         }
       }, 
 
       async deleteStudent({ commit }, studentId) {
-        await fetch(`http://localhost:3000/student/${studentId}`, { method: 'DELETE' })
-        commit('DELETE_STUDENT', studentId);
+        try{
+            const response = await fetch(`http://localhost:3000/student/${studentId}`, { method: 'DELETE' })
+            if(!response.ok) {
+                throw new Error(`HTTP Error! StatusCode: ${response.status}`)
+            }
+            commit('DELETE_STUDENT', studentId);
+        }
+        catch(error) {
+            console.error('Failed to delete student', error)
+        }
       }
 }
 

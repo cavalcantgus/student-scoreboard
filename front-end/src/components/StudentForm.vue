@@ -25,7 +25,9 @@
                         v-model="localStudent.grade1" 
                         :rules="gradesValidation(1)"
                         step="0.01" 
-                        label="1° Bim" required>
+                        label="1° Bim" required
+                        @input="formatGrade(1)"
+                        class="input-field">
                     </v-text-field>
                     <v-text-field 
                         type="number"
@@ -33,6 +35,7 @@
                         :rules="gradesValidation(2)" 
                         step="0.01" 
                         label="2° Bim" required
+                        @input="formatGrade(2)"
                         class="input-field">
                     </v-text-field>
                     <v-text-field 
@@ -41,6 +44,7 @@
                         :rules="gradesValidation(3)"
                         step="0.01" 
                         label="3° Bim" required
+                        @input="formatGrade(3)"
                         class="input-field">
                     </v-text-field>
                     <v-text-field 
@@ -49,6 +53,7 @@
                         :rules="gradesValidation(4)"
                         step="0.01" 
                         label="4° Bim" required
+                        @input="formatGrade(4)"
                         class="input-field">
                     </v-text-field>
                     <v-card-actions class="actions">
@@ -73,7 +78,8 @@ export default {
             localVisible: this.visible,
             subjects: ['Matemática', 'Português', 'Geografia', 'Ciências', 'Filosofia', 'Inglês'],
             rules: {
-                name: value => !!value || 'Este campo é obrigatório'
+                name: value => !!value || 'Este campo é obrigatório',
+                
             }
         }
     },
@@ -97,10 +103,21 @@ export default {
         gradesValidation(gradeNumber){
             return [
                 value => !!value || `Você deve digitar a nota do ${gradeNumber}° bimestre`,
-                value => !isNaN(parseFloat(value)) || `A nota deve ser um número`,
-                value => (value >= 0 && value <= 10) || `A nota deve estar entre 0 e 10`
+                value => /^\d+([.,]\d{1,2})?$/.test(value) || `A nota deve estar no formato correto`,
+                value => {
+                    const parsedValue = parseFloat(value.replace(',', '.'))
+                    return (parsedValue >= 0 && parsedValue <= 10) || `A nota deve estar entre 0 e 10`
+                }
             ]
         },
+
+        formatGrade(gradeNumber) {
+            const field = `grade${gradeNumber}`;
+            this.localStudent[field] = this.localStudent[field]
+                .replace(',', '.')
+                .replace(/^0+(?!$)/, '')
+        },
+
         close() {
             this.$emit('cancel')
         },

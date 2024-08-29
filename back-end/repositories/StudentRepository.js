@@ -5,18 +5,24 @@ function getAllStudents() {
 }
 
 function addStudent(student) {
+    if(!student || typeof student !== 'object'){
+        throw new Error('Invalid student object')
+    }
     student.id = students.length + 1 
     students.push(student)
     return student
 }
 
 function updateStudent(id, updatedStudent) {
+    if(!updatedStudent || typeof updatedStudent!== 'object'){
+        throw new Error('Invalid updated student object')
+    }
     const index = students.findIndex(student => student.id === id)
     if(index !== -1){
         students[index] = updatedStudent
         return students[index]
     } else {
-        return null
+        throw new Error('Student not found')
     }
 }
 
