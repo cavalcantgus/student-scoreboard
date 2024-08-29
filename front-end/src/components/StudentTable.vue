@@ -2,7 +2,7 @@
   <div>
     <h1 class="page-title">Sistema de Cadastro de Notas</h1>
     <v-btn color="primary" @click="showForm">Cadastrar</v-btn>
-    <v-data-table :headers="headers" :items="students" item-key="id">
+    <v-data-table :headers="headers" :items="allStudents" item-key="id">
       <template v-slot:[`item.name`]="{ item }">
         {{ item.name }}
       </template>
@@ -39,14 +39,14 @@
 
       <template v-slot:[`item.actions`]="{ item }">
         <v-icon @click="editStudent(item)">mdi-pencil</v-icon>
-        <v-icon @click="deleteStudent(item)">mdi-delete</v-icon>
+        <v-icon @click="handleDeleteStudent(item)">mdi-delete</v-icon>
       </template>
     </v-data-table>
 
     <StudentForm 
       :student="currentStudent"
       :visible="formVisible"
-      @save="saveStudent"
+      @save="handleSaveOrUpdateStudent"
       @cancel="closeForm"
     />
   </div>
@@ -54,8 +54,7 @@
 
 <script>
 import StudentForm from './StudentForm.vue';
-import api from '@/api'
-import { v4 as uuidv4 } from 'uuid'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
@@ -74,20 +73,18 @@ export default {
         { title: 'Situação', value: 'status' },
         { title: 'Ações', value: 'actions', sortable: false }
       ],
-      students: [],
       currentStudent: {},
       formVisible: false
     };
   },
+  computed: {
+    ...mapGetters('student', ['allStudents'])
+  },
   async mounted() {
-      try {
-        const response = await api.get('/student');
-        this.students = response.data;
-      } catch (error) {
-        console.error('Erro ao carregar os estudantes:', error);
-      }
+      await this.fetchStudents()
   },
   methods: {
+    ...mapActions('student', ['fetchStudents', 'saveStudent', 'deleteStudent']),
     showForm(student = {}) {
       this.currentStudent = { ...student }
       this.formVisible = true
@@ -95,35 +92,15 @@ export default {
     closeForm() {
       this.formVisible = false
     },
-    async saveStudent(student) { 
-      try {
-        if (student.id) {
-          const response = await api.put(`/student/${student.id}`, student)
-          const index = this.students.findIndex(s => s.id === student.id)
-          if (index !== -1) {
-            this.students.splice(index, 1, response.data)
-          }
-        } else {
-          student.id = uuidv4()
-          const response = await api.post('/student', student)
-          this.students.push(response.data); 
-        }
-        this.closeForm()
-      } catch (error) {
-        console.error('Erro ao salvar aluno:', error)
-      } 
+    async handleSaveOrUpdateStudent(student) { 
+      await this.saveStudent(student)
+      this.closeForm()
     },
     editStudent(student) {
       this.showForm(student)
     },
-    async deleteStudent(student) {
-      try{
-        await api.delete(`/student/${student.id}`)
-        this.students = this.students.filter(s => s.id !== student.id)
-      }
-      catch(error) {
-        console.error('Erro ao deletar')
-      }
+    async handleDeleteStudent(student) {
+      await this.deleteStudent(student.id)
     },
     getColor(student) {
         return student.status === 'Aprovado' ? 'green' : 'red'
