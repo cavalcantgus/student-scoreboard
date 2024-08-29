@@ -5,8 +5,10 @@
                 <span class="card-title">Cadastrar Aluno</span>
                 <v-form ref="form">
                     <v-text-field 
+                        type="text" 
                         v-model="localStudent.name" 
                         :rules="[rules.name]"
+                        pattern="[A-Za-z\s]*"
                         label="Nome" required
                         class="input-field">
                     </v-text-field>
@@ -19,26 +21,39 @@
                         class="input-field">
                     </v-combobox>
                     <v-text-field 
+                        type="number"
                         v-model="localStudent.grade1" 
                         :rules="gradesValidation(1)"
-                        label="1° Bim" required>
+                        step="0.01" 
+                        label="1° Bim" required
+                        @input="formatGrade(1)"
+                        class="input-field">
                     </v-text-field>
                     <v-text-field 
+                        type="number"
                         v-model="localStudent.grade2"
                         :rules="gradesValidation(2)" 
+                        step="0.01" 
                         label="2° Bim" required
+                        @input="formatGrade(2)"
                         class="input-field">
                     </v-text-field>
                     <v-text-field 
+                        type="number"
                         v-model="localStudent.grade3" 
                         :rules="gradesValidation(3)"
+                        step="0.01" 
                         label="3° Bim" required
+                        @input="formatGrade(3)"
                         class="input-field">
                     </v-text-field>
                     <v-text-field 
+                        type="number"
                         v-model="localStudent.grade4" 
                         :rules="gradesValidation(4)"
+                        step="0.01" 
                         label="4° Bim" required
+                        @input="formatGrade(4)"
                         class="input-field">
                     </v-text-field>
                     <v-card-actions class="actions">
@@ -63,7 +78,8 @@ export default {
             localVisible: this.visible,
             subjects: ['Matemática', 'Português', 'Geografia', 'Ciências', 'Filosofia', 'Inglês'],
             rules: {
-                name: value => !!value || 'Este campo é obrigatório'
+                name: value => !!value || 'Este campo é obrigatório',
+                
             }
         }
     },
@@ -84,18 +100,24 @@ export default {
         }
     },
     methods: {
-        validadeSubject(value) {
-           if(!value) return 'Você precisa escolher uma disciplina';
-           if(!this.subjects.includes(value)) return 'Disciplina inválida'
-
-           return true
-        },
         gradesValidation(gradeNumber){
             return [
                 value => !!value || `Você deve digitar a nota do ${gradeNumber}° bimestre`,
-                value => (value && !isNaN(value) && value >= 0 && value <= 10) || `A nota do ${gradeNumber}° bimestre deve ser um número entre 0 e 10`
+                value => /^\d+([.,]\d{1,2})?$/.test(value) || `A nota deve estar no formato correto`,
+                value => {
+                    const parsedValue = parseFloat(value.replace(',', '.'))
+                    return (parsedValue >= 0 && parsedValue <= 10) || `A nota deve estar entre 0 e 10`
+                }
             ]
         },
+
+        formatGrade(gradeNumber) {
+            const field = `grade${gradeNumber}`;
+            this.localStudent[field] = this.localStudent[field]
+                .replace(',', '.')
+                .replace(/^0+(?!$)/, '')
+        },
+
         close() {
             this.$emit('cancel')
         },
