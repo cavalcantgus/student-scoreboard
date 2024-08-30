@@ -1,5 +1,5 @@
-import studentRepository from '../repositories/StudentRepository.js'
-import logger from '../logs/logger.js'
+const studentRepository = require('../repositories/StudentRepository.js')
+const logger = require('../logs/logger.js')
 
 async function getAllStudents(req, reply) {
     try{
@@ -76,7 +76,7 @@ function calculateAverageAndStatus(student) {
         status: average >= 7 ? 'Aprovado' : 'Reprovado'
     }
 }
-export default {
+module.exports = {
     getAllStudents,
     addStudent,
     updateStudent,

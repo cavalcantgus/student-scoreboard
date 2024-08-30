@@ -1,7 +1,7 @@
-import Fastify from 'fastify'
-import cors from '@fastify/cors'
-import formbody from '@fastify/formbody'
-import studentRoutes from './routes/StudentRoutes.js'
+const Fastify = require('fastify')
+const cors = require('@fastify/cors')
+const formbody = require('@fastify/formbody')
+const studentRoutes = require('./routes/StudentRoutes.js')
 
 const app = Fastify()
 
