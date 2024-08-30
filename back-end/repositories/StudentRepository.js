@@ -19,7 +19,7 @@ function updateStudent(id, updatedStudent) {
     }
     const index = students.findIndex(student => student.id === id)
     if(index !== -1){
-        students[index] = updatedStudent
+        students[index] = {...updatedStudent, id}
         return students[index]
     } else {
         throw new Error('Student not found')
@@ -35,7 +35,7 @@ function deleteStudent(id) {
     return false
 }
 
-export default {
+module.exports = {
     getAllStudents,
     addStudent,
     updateStudent,
