@@ -1,5 +1,5 @@
 const studentRepository = require('../repositories/StudentRepository.js')
-const logger = require('../logs/logger.js') 
+const logger = require('../logs/logger.js')
 
 async function getAllStudents(req, reply) {
     try{

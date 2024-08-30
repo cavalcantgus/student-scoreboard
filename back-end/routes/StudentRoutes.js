@@ -1,4 +1,5 @@
-import studentHandler from '../handler/StudentHandler.js'
+const studentHandler = require('../handler/StudentHandler.js')
+
 
 const studentRoutes = [
     {
@@ -26,4 +27,4 @@ const studentRoutes = [
     }
 ]
 
-export default studentRoutes
+module.exports= studentRoutes

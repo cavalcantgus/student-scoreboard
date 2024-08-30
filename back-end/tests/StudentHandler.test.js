@@ -14,7 +14,7 @@ describe('StudentHandler', () => {
         const req = {}
         const reply = { send: jest.fn() }
 
-        const students = [{id: 1, name: 'Marcelo', disciplina: 'Matemática', grade1: 10, grade2: 8, grade3: 6.5, grade4: 9}]
+        const students = [{id: 1, name: 'Marcelo', disciplina: 'Matemática', grade1: 10, grade2: 8, grade3: 6.5, grade4: 9, average: 8.37, status: 'Aprovado'}]
         studentRepository.getAllStudents.mockReturnValue(students)
 
         await studentHandler.getAllStudents(req, reply)
