@@ -23,4 +23,13 @@ describe('StudentReposoitory', () => {
         expect(updatedStudent).toMatchObject(updateStudent)
         expect(updatedStudent).toHaveProperty('id', 1)
     })
+
+    test('Deleta um estudante existente', () => {
+        const student = { name: 'Lucas', disciplina: 'Matemática', grade1: 10, grade2: 10, grade3: 0.5, grade4: 8}
+        const addStudent = studentRepository.addStudent(student)
+
+        const deletedStudent = studentRepository.deleteStudent(addStudent.id)
+        expect(deletedStudent).toBe(true)
+        expect(studentRepository.getAllStudents()).toHaveLength(0)
+    })
 })
